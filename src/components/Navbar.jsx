@@ -32,8 +32,20 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [mobileOpen]);
+
   return (
-    <motion.nav
+    <>
+      <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ ...honeyTransition, delay: 0.2 }}
@@ -70,10 +82,16 @@ export default function Navbar() {
         {/* CTA + Mobile Icons */}
         <div className="flex items-center gap-4 md:gap-3">
           <Link
+            to="/cart"
+            className="hidden md:flex items-center justify-center text-foreground hover:text-primary transition-colors p-2"
+            aria-label="Cart"
+          >
+            <ShoppingBag className="w-5 h-5" />
+          </Link>
+          <Link
             to="/shop"
             className="hidden md:inline-flex items-center gap-2 bg-white text-[hsl(28,30%,10%)] font-body font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 no-underline"
           >
-            <ShoppingBag className="w-4 h-4" />
             Shop Now
           </Link>
 
@@ -82,7 +100,7 @@ export default function Navbar() {
             <button className="text-foreground p-1" aria-label="Search">
               <Search className="w-5 h-5" />
             </button>
-            <Link to="/shop" className="text-foreground p-1 relative" aria-label="Shop">
+            <Link to="/cart" className="text-foreground p-1 relative" aria-label="Cart">
               <ShoppingBag className="w-5 h-5" />
             </Link>
             {/* Hamburger */}
@@ -108,17 +126,22 @@ export default function Navbar() {
         </div>
       </div>
 
+    </motion.nav>
+
       {/* Mobile Menu */}
       <motion.div
         initial={false}
         animate={{
-          height: mobileOpen ? "auto" : 0,
+          height: mobileOpen ? "100vh" : 0,
           opacity: mobileOpen ? 1 : 0,
         }}
         transition={honeyTransition}
-        className="md:hidden overflow-hidden bg-background/95 backdrop-blur-md"
+        className={`fixed top-0 left-0 w-full z-40 bg-background/95 backdrop-blur-md md:hidden ${
+          mobileOpen ? "overflow-y-auto" : "overflow-hidden"
+        }`}
+        style={{ pointerEvents: mobileOpen ? "auto" : "none" }}
       >
-        <div className="flex flex-col gap-3 px-6 pb-5 pt-2">
+        <div className="flex flex-col gap-3 px-6 pb-20 pt-20 min-h-screen">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -139,6 +162,6 @@ export default function Navbar() {
           </Link>
         </div>
       </motion.div>
-    </motion.nav>
+    </>
   );
 }
