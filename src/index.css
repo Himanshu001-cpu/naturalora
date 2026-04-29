@@ -175,3 +175,28 @@
 ::-webkit-scrollbar-thumb:hover {
     background: hsl(42 95% 55% / 0.5);
 }
+
+/* ══════════════════════════════════════════════
+   Honey Field — "under glass" 3D parallax layer
+   ══════════════════════════════════════════════ */
+
+.honey-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* depth + softness */
+  filter: blur(18px) saturate(1.2);
+  opacity: 0.35;
+
+  /* golden ambient glow */
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 200, 80, 0.08),
+    transparent 60%
+  );
+
+  /* makes it feel embedded */
+  mix-blend-mode: overlay;
+}

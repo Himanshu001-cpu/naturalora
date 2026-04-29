@@ -1,15 +1,16 @@
-import { motion, useInView } from "motion/react";
+import { motion } from "motion/react";
 import { useRef, useState, useEffect } from "react";
 import { ShoppingBag } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const honeyTransition = { type: "spring", stiffness: 120, damping: 20 };
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Our Honey", href: "#our-honey" },
-  { label: "Sourcing", href: "#sourcing" },
-  { label: "Process", href: "#process" },
-  { label: "Reviews", href: "#reviews" },
+  { label: "Home", href: "/" },
+  { label: "Our Honey", href: "/#our-honey" },
+  { label: "Sourcing", href: "/#sourcing" },
+  { label: "Process", href: "/#process" },
+  { label: "Reviews", href: "/#reviews" },
 ];
 
 export default function Navbar() {
@@ -33,7 +34,7 @@ export default function Navbar() {
     >
       <div className="flex items-center justify-between px-6 py-3">
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-3 no-underline">
+        <Link to="/" className="flex items-center gap-3 no-underline">
           <img
             src="/images/logo.png"
             alt="Naturalora"
@@ -42,30 +43,30 @@ export default function Navbar() {
           <span className="font-heading text-xl italic text-foreground tracking-wide">
             Naturalora
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.href}
               className="text-sm font-body text-muted-foreground hover:text-primary transition-colors duration-300 no-underline tracking-wide"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
         {/* CTA + Mobile Toggle */}
         <div className="flex items-center gap-3">
-          <a
-            href="#shop"
+          <Link
+            to="/shop"
             className="hidden sm:inline-flex items-center gap-2 bg-white text-[hsl(28,30%,10%)] font-body font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 no-underline"
           >
             <ShoppingBag className="w-4 h-4" />
             Shop Now
-          </a>
+          </Link>
 
           {/* Hamburger */}
           <button
@@ -101,22 +102,22 @@ export default function Navbar() {
       >
         <div className="flex flex-col gap-3 px-6 pb-5 pt-2">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.href}
               onClick={() => setMobileOpen(false)}
               className="text-sm font-body text-muted-foreground hover:text-primary transition-colors no-underline"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#shop"
+          <Link
+            to="/shop"
             className="sm:hidden inline-flex items-center justify-center gap-2 bg-white text-[hsl(28,30%,10%)] font-body font-semibold text-sm px-5 py-2.5 rounded-full no-underline mt-2"
           >
             <ShoppingBag className="w-4 h-4" />
             Shop Now
-          </a>
+          </Link>
         </div>
       </motion.div>
     </motion.nav>

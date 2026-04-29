@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(50, 50) rotate(-15) translate(-50, -50)">
+    <!-- Right Wing -->
+    <path d="M 50 40 C 75 10, 95 30, 60 50 Z" fill="url(#wingGrad)" opacity="0.8" />
+    <!-- Left Wing -->
+    <path d="M 50 40 C 25 10, 5 30, 40 50 Z" fill="url(#wingGrad)" opacity="0.8" />
+    
+    <!-- Body -->
+    <rect x="35" y="35" width="30" height="45" rx="15" fill="#FFC107" />
+    
+    <!-- Stripes -->
+    <rect x="35" y="45" width="30" height="6" fill="#1C1C1C" />
+    <rect x="35" y="60" width="30" height="6" fill="#1C1C1C" />
+    
+    <!-- Stinger -->
+    <polygon points="45,80 55,80 50,90" fill="#1C1C1C" />
+    
+    <!-- Eyes -->
+    <circle cx="42" cy="40" r="2.5" fill="#1C1C1C" />
+    <circle cx="58" cy="40" r="2.5" fill="#1C1C1C" />
+  </g>
+  <defs>
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#d4ebf2" />
+    </linearGradient>
+  </defs>
+</svg>

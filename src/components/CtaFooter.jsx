@@ -11,67 +11,79 @@ const footerLinks = {
   Support: ["Contact Us", "Shipping", "Returns", "FAQ"],
 };
 
-export default function CtaFooter() {
+export default function CtaFooter({
+  heading = "Taste honey the way it was meant to be.",
+  subtext = "Experience purity in every drop.",
+  primaryBtnText = "Shop Now",
+  primaryBtnLink = "/shop",
+  secondaryBtnText = "Explore Sourcing",
+  secondaryBtnLink = "/#sourcing",
+  hideCta = false
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <>
       {/* CTA Section */}
-      <section ref={ref} className="relative py-32 px-6 overflow-hidden">
-        {/* Background glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at 50% 50%, rgba(250,204,21,0.1) 0%, transparent 50%)",
-          }}
-        />
+      {!hideCta && (
+        <section ref={ref} className="relative py-32 px-6 overflow-hidden">
+          {/* Background glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 50%, rgba(250,204,21,0.1) 0%, transparent 50%)",
+            }}
+          />
 
-        <PollenParticles />
+          <PollenParticles />
 
-        <div className="relative max-w-3xl mx-auto text-center z-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-            transition={{ ...honeyTransition, delay: 0.1 }}
-            className="font-heading italic text-4xl sm:text-5xl md:text-6xl text-foreground mb-6 leading-tight"
-          >
-            Taste honey the way it was meant to be.
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ ...honeyTransition, delay: 0.3 }}
-            className="font-body text-lg text-muted-foreground mb-10 font-light"
-          >
-            Experience purity in every drop.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ ...honeyTransition, delay: 0.5 }}
-            className="flex flex-wrap items-center justify-center gap-4"
-          >
-            <a
-              href="#shop"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body font-semibold text-sm px-8 py-4 rounded-full hover:scale-105 transition-transform duration-300 no-underline"
+          <div className="relative max-w-3xl mx-auto text-center z-10">
+            <motion.h2
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+              transition={{ ...honeyTransition, delay: 0.1 }}
+              className="font-heading italic text-4xl sm:text-5xl md:text-6xl text-foreground mb-6 leading-tight"
             >
-              <ShoppingBag className="w-4 h-4" />
-              Shop Now
-            </a>
-            <a
-              href="#sourcing"
-              className="liquid-glass inline-flex items-center gap-2 px-8 py-4 rounded-full font-body font-medium text-muted-foreground hover:text-foreground transition-all duration-300 no-underline"
+              {heading}
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ ...honeyTransition, delay: 0.3 }}
+              className="font-body text-lg text-muted-foreground mb-10 font-light"
             >
-              <MapPin className="w-4 h-4" />
-              Explore Sourcing
-            </a>
-          </motion.div>
-        </div>
-      </section>
+              {subtext}
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ ...honeyTransition, delay: 0.5 }}
+              className="flex flex-wrap items-center justify-center gap-4"
+            >
+              <a
+                href={primaryBtnLink}
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body font-semibold text-sm px-8 py-4 rounded-full hover:scale-105 transition-transform duration-300 no-underline"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                {primaryBtnText}
+              </a>
+              {secondaryBtnText && (
+                <a
+                  href={secondaryBtnLink}
+                  className="liquid-glass inline-flex items-center gap-2 px-8 py-4 rounded-full font-body font-medium text-muted-foreground hover:text-foreground transition-all duration-300 no-underline"
+                >
+                  <MapPin className="w-4 h-4" />
+                  {secondaryBtnText}
+                </a>
+              )}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="relative border-t border-border/30 py-16 px-6">
