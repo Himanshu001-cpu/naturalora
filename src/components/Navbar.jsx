@@ -77,18 +77,68 @@ export default function Navbar() {
             Shop Now
           </Link>
 
-          {/* Mobile Icons: Search & Cart */}
+          {/* Mobile Icons: Search, Cart, Menu */}
           <div className="flex md:hidden items-center gap-3">
             <button className="text-foreground p-1" aria-label="Search">
               <Search className="w-5 h-5" />
             </button>
-            <Link to="/cart" className="text-foreground p-1 relative" aria-label="Cart">
+            <Link to="/shop" className="text-foreground p-1 relative" aria-label="Shop">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
             </Link>
+            {/* Hamburger */}
+            <button
+              className="flex flex-col gap-1.5 p-1 ml-1"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
+            >
+              <motion.span
+                animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                className="w-5 h-0.5 bg-foreground block"
+              />
+              <motion.span
+                animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
+                className="w-5 h-0.5 bg-foreground block"
+              />
+              <motion.span
+                animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+                className="w-5 h-0.5 bg-foreground block"
+              />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      <motion.div
+        initial={false}
+        animate={{
+          height: mobileOpen ? "auto" : 0,
+          opacity: mobileOpen ? 1 : 0,
+        }}
+        transition={honeyTransition}
+        className="md:hidden overflow-hidden bg-background/95 backdrop-blur-md"
+      >
+        <div className="flex flex-col gap-3 px-6 pb-5 pt-2">
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              to={link.href}
+              onClick={() => setMobileOpen(false)}
+              className="text-sm font-body text-muted-foreground hover:text-primary transition-colors no-underline py-2"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            to="/shop"
+            onClick={() => setMobileOpen(false)}
+            className="inline-flex items-center justify-center gap-2 bg-white text-[hsl(28,30%,10%)] font-body font-semibold text-sm px-5 py-3 rounded-full no-underline mt-2"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Shop Now
+          </Link>
+        </div>
+      </motion.div>
     </motion.nav>
   );
 }

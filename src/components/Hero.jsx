@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Play, ShoppingBag } from "lucide-react";
+import { Link } from "react-router-dom";
 import BlurText from "./BlurText";
 import PollenParticles from "./PollenParticles";
 
@@ -74,13 +75,13 @@ export default function Hero() {
           transition={{ ...honeyTransition, delay: 1.5 }}
           className="flex flex-wrap items-center justify-center gap-4"
         >
-          <a
-            href="#shop"
+          <Link
+            to="/shop"
             className="liquid-glass-strong inline-flex items-center gap-2 px-8 py-4 rounded-full font-body font-semibold text-foreground hover:scale-105 transition-transform duration-300 no-underline"
           >
             <ShoppingBag className="w-5 h-5" />
             Shop Honey
-          </a>
+          </Link>
           <a
             href="#process"
             className="liquid-glass inline-flex items-center gap-2 px-8 py-4 rounded-full font-body font-medium text-muted-foreground hover:text-foreground hover:scale-105 transition-all duration-300 no-underline"
