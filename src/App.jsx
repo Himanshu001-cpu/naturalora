@@ -16,9 +16,6 @@ function HashScroll() {
 
   useEffect(() => {
     if (!location.hash) {
-      if (location.pathname === "/") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
       return;
     }
 
@@ -29,26 +26,16 @@ function HashScroll() {
       targetId = location.hash.slice(1);
     }
 
-    let frameId;
     let timeoutId;
 
-    const scrollToHash = (attempt = 0) => {
+    const scrollToHash = () => {
       const target = document.getElementById(targetId);
-
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-        return;
-      }
-
-      if (attempt < 12) {
-        timeoutId = window.setTimeout(() => scrollToHash(attempt + 1), 50);
-      }
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
-    frameId = requestAnimationFrame(() => scrollToHash());
+    timeoutId = window.setTimeout(scrollToHash, 50);
 
     return () => {
-      cancelAnimationFrame(frameId);
       window.clearTimeout(timeoutId);
     };
   }, [location.pathname, location.hash]);

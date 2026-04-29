@@ -52,7 +52,7 @@ export default function Cart() {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-24 h-24 mb-6 rounded-full liquid-glass flex items-center justify-center text-primary"
+          className="w-24 h-24 mb-6 rounded-2xl liquid-glass flex items-center justify-center text-primary"
         >
           <Hexagon className="w-12 h-12" />
         </motion.div>
@@ -80,7 +80,7 @@ export default function Cart() {
           <Link to="/">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 rounded-full liquid-glass-strong text-primary hover:text-primary-foreground hover:bg-primary transition-colors flex items-center gap-2"
+              className="px-8 py-3 rounded-xl liquid-glass-strong text-primary hover:text-primary-foreground hover:bg-primary transition-colors flex items-center gap-2"
             >
               Browse Honey <ArrowRight className="w-4 h-4" />
             </motion.button>
@@ -112,10 +112,10 @@ export default function Cart() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, x: -20 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="liquid-glass rounded-[20px] p-4 flex gap-4 relative group border-t border-white/10"
+                className="liquid-glass rounded-xl p-4 flex gap-4 relative group border-t border-white/10"
               >
                 {/* Image */}
-                <div className="w-16 h-16 shrink-0 bg-black/20 rounded-xl overflow-hidden relative">
+                <div className="w-16 h-16 shrink-0 bg-black/20 rounded-lg overflow-hidden relative">
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-10" />
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
@@ -138,11 +138,11 @@ export default function Cart() {
                   
                   <div className="flex items-center justify-between mt-3">
                     {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 liquid-glass rounded-xl px-4 py-2">
+                    <div className="flex items-center gap-2 liquid-glass rounded-lg px-4 py-2">
                       <motion.button 
                         whileTap={{ scale: 0.9 }}
                         onClick={() => updateQuantity(item.id, -1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-md text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </motion.button>
@@ -150,7 +150,7 @@ export default function Cart() {
                       <motion.button 
                         whileTap={{ scale: 0.9 }}
                         onClick={() => updateQuantity(item.id, 1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-md text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </motion.button>
@@ -171,46 +171,49 @@ export default function Cart() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="liquid-glass rounded-3xl p-6 sticky top-28 max-w-md mx-auto"
+            className="liquid-glass backdrop-blur-sm rounded-xl p-5 space-y-4 sticky top-28 max-w-md mx-auto"
           >
-            <h2 className="text-xl font-heading mb-6">Order Summary</h2>
+            <h2 className="font-heading text-lg italic">Order Summary</h2>
             
             {/* Promo */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2">
               <input 
                 type="text" 
                 placeholder="Promo code" 
                 value={promo}
                 onChange={(e) => setPromo(e.target.value)}
-                className="flex-1 bg-black/20 border border-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 text-foreground"
+                className="flex-1 bg-transparent border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 text-foreground"
               />
               <motion.button 
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 rounded-xl liquid-glass text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="px-4 py-2 rounded-lg liquid-glass-strong text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
                 Apply
               </motion.button>
             </div>
 
             {/* Totals */}
-            <div className="space-y-4 text-sm mb-6">
-              <div className="flex justify-between text-muted-foreground">
-                <span>Subtotal</span>
-                <span>₹{subtotal}</span>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-white/60">Subtotal</span>
+                <span className="font-medium text-foreground">₹{subtotal}</span>
               </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Delivery</span>
-                <span className="text-primary">Free</span>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/60">Delivery</span>
+                <span className="text-primary font-medium">Free</span>
               </div>
-              <div className="border-t border-white/10 pt-4 mt-2 flex justify-between items-center">
-                <span className="font-medium text-foreground">Total</span>
-                <span className="text-3xl font-bold text-primary text-shimmer">₹{total}</span>
+              
+              <div className="border-t border-white/10 my-2" />
+              
+              <div className="flex justify-between items-center">
+                <span className="text-base font-medium">Total</span>
+                <span className="text-2xl font-heading text-primary text-shimmer">₹{total}</span>
               </div>
             </div>
 
             <motion.button 
               whileTap={{ scale: 0.98 }}
-              className="hidden lg:flex w-full rounded-full liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all items-center justify-center gap-2 group"
+              className="hidden lg:flex w-full rounded-xl liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all items-center justify-center gap-2 group"
             >
               Proceed to Checkout 
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -231,7 +234,7 @@ export default function Cart() {
         </div>
         <motion.button 
           whileTap={{ scale: 0.98 }}
-          className="w-full rounded-full liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center gap-2"
+          className="w-full rounded-xl liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center gap-2"
         >
           Proceed to Checkout
         </motion.button>
