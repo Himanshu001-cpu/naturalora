@@ -32,20 +32,8 @@ export default function Navbar() {
     };
   }, []);
 
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [mobileOpen]);
-
   return (
-    <>
-      <motion.nav
+    <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ ...honeyTransition, delay: 0.2 }}
@@ -126,22 +114,17 @@ export default function Navbar() {
         </div>
       </div>
 
-    </motion.nav>
-
       {/* Mobile Menu */}
       <motion.div
         initial={false}
         animate={{
-          height: mobileOpen ? "100vh" : 0,
+          height: mobileOpen ? "auto" : 0,
           opacity: mobileOpen ? 1 : 0,
         }}
         transition={honeyTransition}
-        className={`fixed top-0 left-0 w-full z-40 bg-background/95 backdrop-blur-md md:hidden ${
-          mobileOpen ? "overflow-y-auto" : "overflow-hidden"
-        }`}
-        style={{ pointerEvents: mobileOpen ? "auto" : "none" }}
+        className="md:hidden overflow-hidden bg-background/95 backdrop-blur-md"
       >
-        <div className="flex flex-col gap-3 px-6 pb-20 pt-20 min-h-screen">
+        <div className="flex flex-col gap-3 px-6 pb-5 pt-2">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -162,6 +145,6 @@ export default function Navbar() {
           </Link>
         </div>
       </motion.div>
-    </>
+    </motion.nav>
   );
 }

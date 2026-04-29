@@ -102,7 +102,7 @@ export default function Cart() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left: Items List */}
-        <div className="lg:col-span-2 flex flex-col gap-4">
+        <div className="lg:col-span-2 flex flex-col gap-6">
           <AnimatePresence mode="popLayout">
             {cart.map((item) => (
               <motion.div
@@ -112,7 +112,7 @@ export default function Cart() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, x: -20 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="liquid-glass rounded-2xl p-4 flex gap-4 relative group"
+                className="liquid-glass rounded-[20px] p-4 flex gap-4 relative group border-t border-white/10"
               >
                 {/* Image */}
                 <div className="w-16 h-16 shrink-0 bg-black/20 rounded-xl overflow-hidden relative">
@@ -138,11 +138,11 @@ export default function Cart() {
                   
                   <div className="flex items-center justify-between mt-3">
                     {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 liquid-glass rounded-full px-1 py-1">
+                    <div className="flex items-center gap-2 liquid-glass rounded-xl px-4 py-2">
                       <motion.button 
                         whileTap={{ scale: 0.9 }}
                         onClick={() => updateQuantity(item.id, -1)}
-                        className="w-10 h-10 flex items-center justify-center rounded-full text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </motion.button>
@@ -150,7 +150,7 @@ export default function Cart() {
                       <motion.button 
                         whileTap={{ scale: 0.9 }}
                         onClick={() => updateQuantity(item.id, 1)}
-                        className="w-10 h-10 flex items-center justify-center rounded-full text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </motion.button>
@@ -171,7 +171,7 @@ export default function Cart() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="liquid-glass rounded-2xl p-6 sticky top-28"
+            className="liquid-glass rounded-3xl p-6 sticky top-28 max-w-md mx-auto"
           >
             <h2 className="text-xl font-heading mb-6">Order Summary</h2>
             
@@ -202,7 +202,7 @@ export default function Cart() {
                 <span>Delivery</span>
                 <span className="text-primary">Free</span>
               </div>
-              <div className="border-t border-border/50 pt-4 mt-2 flex justify-between items-center">
+              <div className="border-t border-white/10 pt-4 mt-2 flex justify-between items-center">
                 <span className="font-medium text-foreground">Total</span>
                 <span className="text-3xl font-bold text-primary text-shimmer">₹{total}</span>
               </div>
@@ -210,7 +210,7 @@ export default function Cart() {
 
             <motion.button 
               whileTap={{ scale: 0.98 }}
-              className="hidden lg:flex w-full rounded-full liquid-glass-strong py-4 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all items-center justify-center gap-2 group"
+              className="hidden lg:flex w-full rounded-full liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all items-center justify-center gap-2 group"
             >
               Proceed to Checkout 
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -223,7 +223,7 @@ export default function Cart() {
       <motion.div 
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="fixed bottom-0 left-0 right-0 p-4 pb-8 bg-background/80 backdrop-blur-xl border-t border-border/50 lg:hidden z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"
+        className="fixed bottom-0 left-0 right-0 p-4 pb-8 bg-background/80 backdrop-blur-sm border-t border-white/10 lg:hidden z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"
       >
         <div className="flex items-center justify-between mb-4 px-2">
           <span className="text-sm text-muted-foreground">Total</span>
@@ -231,7 +231,7 @@ export default function Cart() {
         </div>
         <motion.button 
           whileTap={{ scale: 0.98 }}
-          className="w-full rounded-full liquid-glass-strong py-4 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center gap-2"
+          className="w-full rounded-full liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center gap-2"
         >
           Proceed to Checkout
         </motion.button>
