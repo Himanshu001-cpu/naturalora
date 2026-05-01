@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "workspace": {
+    "name": "naturalora",
+    "createdAt": 1777462457370,
+    "preset": "starter"
+  },
+  "authorizedRoots": [
+    "/home/himanshu/codes/naturalora"
+  ]
+}
