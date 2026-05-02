@@ -3,45 +3,39 @@ import { Link } from "react-router-dom";
 import { Plus, ShoppingBag } from "lucide-react";
 import { useState, useEffect } from "react";
 import CtaFooter from "../components/CtaFooter";
+import { useCartStore } from "../store/cart";
 
 const honeyTransition = { type: "spring", stiffness: 120, damping: 20 };
 
-const products = [
-  {
-    id: "wild-forest",
-    name: "Wild Forest Honey",
-    tagline: "Deep, earthy, untouched.",
-    price: "499",
-    image: "/images/wild_forest_honey.png",
-  },
-  {
-    id: "acacia-infused",
-    name: "Acacia Infused Honey",
-    tagline: "Light, floral, with honeycomb.",
-    price: "699",
-    image: "/images/acacia_infused_honey.png",
-  },
-  {
-    id: "mountain-raw",
-    name: "Mountain Raw Honey",
-    tagline: "Rich, dense, cold-pressed.",
-    price: "549",
-    image: "/images/wild_forest_honey.png",
-  },
-  {
-    id: "wildflower-nectar",
-    name: "Wildflower Nectar",
-    tagline: "Sweet, diverse, vibrant.",
-    price: "450",
-    image: "/images/acacia_infused_honey.png",
-  },
-];
+import { useProducts } from "../hooks/useProducts";
 
 const types = ["All", "Raw", "Wild", "Infused"];
 
 export default function Shop() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeType, setActiveType] = useState("All");
+  const [addedItems, setAddedItems] = useState({});
+
+  const { products, loading, error } = useProducts();
+
+  const addItem = useCartStore((state) => state.addItem);
+  const totalItems = useCartStore((state) => state.getTotalItems());
+  const subtotal = useCartStore((state) => state.getSubtotal());
+
+  const handleQuickAdd = (e, product) => {
+    e.preventDefault(); // Prevent Link navigation
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image,
+      quantity: 1,
+      maxQuantity: 20,
+      meta: "Standard Jar"
+    });
+    setAddedItems(prev => ({ ...prev, [product.id]: true }));
+    setTimeout(() => setAddedItems(prev => ({ ...prev, [product.id]: false })), 2000);
+  };
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -126,8 +120,36 @@ export default function Shop() {
 
       {/* Product Grid */}
       <section className="max-w-6xl mx-auto px-4 md:px-6 mb-24">
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-          {products.map((product, i) => (
+        {loading ? (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <div key={n} className="liquid-glass rounded-2xl md:rounded-3xl p-3 md:p-6 relative flex flex-col h-full min-h-[250px] md:min-h-[350px] animate-pulse">
+                <div className="relative aspect-square mb-3 md:mb-6 rounded-xl md:rounded-2xl bg-black/10 dark:bg-white/10" />
+                <div className="h-6 bg-black/10 dark:bg-white/10 rounded-md w-3/4 mb-2" />
+                <div className="hidden md:block h-4 bg-black/10 dark:bg-white/10 rounded-md w-full mb-4" />
+                <div className="h-6 bg-black/10 dark:bg-white/10 rounded-md w-1/4 mt-auto" />
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 liquid-glass rounded-3xl mx-auto max-w-lg">
+            <h3 className="text-xl md:text-2xl font-heading text-red-500 mb-3">Unable to load products</h3>
+            <p className="text-muted-foreground font-body text-sm md:text-base mb-6 px-4">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-8 py-3 bg-primary text-primary-foreground rounded-full text-sm font-body font-semibold transition-transform hover:scale-105 active:scale-95"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : products?.length === 0 ? (
+          <div className="text-center py-20">
+            <h3 className="text-xl font-heading text-foreground mb-2">No products found.</h3>
+            <p className="text-muted-foreground font-body">Check back later for new arrivals.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+            {products.map((product, i) => (
             <Link key={product.id} to={`/product/${product.id}`} className="no-underline group">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -149,8 +171,11 @@ export default function Shop() {
                   {/* Quick Add Button - Desktop Only */}
                   {!isMobile && (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
-                      <button className="liquid-glass-strong px-6 py-3 rounded-full flex items-center gap-2 text-sm font-body font-semibold hover:scale-105 transition-transform">
-                        <Plus className="w-4 h-4" /> Add to Cart
+                      <button 
+                        onClick={(e) => handleQuickAdd(e, product)}
+                        className="liquid-glass-strong px-6 py-3 rounded-full flex items-center gap-2 text-sm font-body font-semibold hover:scale-105 transition-transform"
+                      >
+                        {addedItems[product.id] ? "Added!" : <><Plus className="w-4 h-4" /> Add to Cart</>}
                       </button>
                     </div>
                   )}
@@ -168,8 +193,11 @@ export default function Shop() {
                   </div>
                   {/* Mobile Add Button */}
                   {isMobile && (
-                    <button className="mt-3 w-full rounded-full liquid-glass-strong py-2 text-xs font-body font-semibold flex items-center justify-center gap-1">
-                      <Plus className="w-3 h-3" /> Add
+                    <button 
+                      onClick={(e) => handleQuickAdd(e, product)}
+                      className="mt-3 w-full rounded-full liquid-glass-strong py-2 text-xs font-body font-semibold flex items-center justify-center gap-1 active:scale-95 transition-transform"
+                    >
+                      {addedItems[product.id] ? "Added!" : <><Plus className="w-3 h-3" /> Add</>}
                     </button>
                   )}
                 </div>
@@ -177,6 +205,7 @@ export default function Shop() {
             </Link>
           ))}
         </div>
+        )}
       </section>
 
       {/* CTA Banner - Hidden on mobile for cleaner flow */}
@@ -191,16 +220,18 @@ export default function Shop() {
       </div>
 
       {/* Bottom Cart Bar - Mobile Only */}
-      {isMobile && (
+      {isMobile && totalItems > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/80 backdrop-blur-md border-t border-border/30">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-xs font-body text-muted-foreground">2 items</span>
-              <span className="text-lg font-heading font-medium text-foreground">₹1,198</span>
+              <span className="text-xs font-body text-muted-foreground">{totalItems} item{totalItems !== 1 ? 's' : ''}</span>
+              <span className="text-lg font-heading font-medium text-foreground">₹{subtotal}</span>
             </div>
-            <button className="bg-primary text-primary-foreground px-6 py-3 rounded-full text-sm font-body font-semibold flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4" /> View Cart
-            </button>
+            <Link to="/cart">
+              <button className="bg-primary text-primary-foreground px-6 py-3 rounded-full text-sm font-body font-semibold flex items-center gap-2 active:scale-95 transition-transform">
+                <ShoppingBag className="w-4 h-4" /> View Cart
+              </button>
+            </Link>
           </div>
         </div>
       )}

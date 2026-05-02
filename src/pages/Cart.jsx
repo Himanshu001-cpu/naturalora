@@ -1,51 +1,19 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Minus, Plus, X, ArrowRight, Hexagon } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowRight, Hexagon } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const initialCart = [
-  {
-    id: 1,
-    name: "Wild Forest Honey",
-    meta: "500g",
-    price: 998,
-    image: "/images/honey-jar.png",
-    quantity: 1
-  },
-  {
-    id: 2,
-    name: "Acacia Honey",
-    meta: "250g",
-    price: 549,
-    image: "/images/honey-jar.png",
-    quantity: 2
-  }
-];
+import CartList from '../components/cart/CartList';
+import { useCartStore } from '../store/cart';
 
 export default function Cart() {
-  const [cart, setCart] = useState(initialCart);
   const [promo, setPromo] = useState("");
-
-  const updateQuantity = (id, delta) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQ = item.quantity + delta;
-        return { ...item, quantity: newQ > 0 ? newQ : 1 };
-      }
-      return item;
-    }));
-  };
-
-  const removeItem = (id) => {
-    setCart(prev => prev.filter(item => item.id !== id));
-  };
-
-  const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const items = useCartStore((state) => state.items);
+  const subtotal = useCartStore((state) => state.getSubtotal());
   const delivery = subtotal > 0 ? 0 : 0; // Free delivery for minimal UI
   const total = subtotal + delivery;
 
   // Empty Cart State
-  if (cart.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="min-h-screen pt-32 px-4 pb-32 flex flex-col items-center justify-center text-center">
         <motion.div 
@@ -77,7 +45,7 @@ export default function Cart() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <Link to="/">
+          <Link to="/shop">
             <motion.button
               whileTap={{ scale: 0.95 }}
               className="px-8 py-3 rounded-xl liquid-glass-strong text-primary hover:text-primary-foreground hover:bg-primary transition-colors flex items-center gap-2"
@@ -102,68 +70,7 @@ export default function Cart() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left: Items List */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <AnimatePresence mode="popLayout">
-            {cart.map((item) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, x: -20 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="liquid-glass rounded-xl p-4 flex gap-4 relative group border-t border-white/10"
-              >
-                {/* Image */}
-                <div className="w-16 h-16 shrink-0 bg-black/20 rounded-lg overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-10" />
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                
-                {/* Content */}
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <h3 className="font-medium text-foreground pr-8 text-lg">{item.name}</h3>
-                      <button 
-                        onClick={() => removeItem(item.id)}
-                        className="text-muted-foreground hover:text-destructive transition-colors absolute top-4 right-4 lg:opacity-0 lg:group-hover:opacity-100 p-1"
-                        aria-label="Remove item"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{item.meta}</p>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-3">
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 liquid-glass rounded-lg px-4 py-2">
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-md text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </motion.button>
-                      <span className="w-8 text-center text-base font-medium">{item.quantity}</span>
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-8 h-8 flex items-center justify-center rounded-md text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </motion.button>
-                    </div>
-                    
-                    {/* Price */}
-                    <span className="font-semibold text-primary text-lg tracking-tight">₹{item.price * item.quantity}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+        <CartList />
 
         {/* Right: Order Summary (Desktop only side, mobile bottom) */}
         <div className="lg:col-span-1">

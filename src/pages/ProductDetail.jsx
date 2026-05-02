@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { Minus, Plus, ShoppingBag, Star, ShieldCheck, Leaf, FlaskConical, Heart } from "lucide-react";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion";
 import CtaFooter from "../components/CtaFooter";
+import { useCartStore } from "../store/cart";
+import { useProduct } from "../hooks/useProduct";
+import { useProducts } from "../hooks/useProducts";
 
 const honeyTransition = { type: "spring", stiffness: 120, damping: 20 };
 
@@ -11,6 +14,8 @@ export default function ProductDetail() {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
+  const [addedFeedback, setAddedFeedback] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -24,39 +29,52 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, [id]);
 
-  // Dummy product fetching based on id
-  const product = {
-    id: id || "wild-forest",
-    name: id === "acacia-infused" ? "Acacia Infused Honey" : "Wild Forest Honey",
-    tagline: id === "acacia-infused" ? "Light, floral, with honeycomb." : "Deep, earthy, untouched.",
-    price: id === "acacia-infused" ? "699" : "499",
-    image: id === "acacia-infused" ? "/images/acacia_infused_honey.png" : "/images/wild_forest_honey.png",
-    rating: 4.9,
-    reviews: 128,
-    status: "In Stock",
-    delivery: "Ships in 24 hours",
+  const { product, loading, error } = useProduct(id);
+  const { products: allProducts, loading: productsLoading } = useProducts();
+
+  const handleAddToCart = () => {
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image,
+      quantity: quantity,
+      maxQuantity: 20,
+      meta: "Standard Jar"
+    });
+    setAddedFeedback(true);
+    setTimeout(() => setAddedFeedback(false), 2000);
   };
 
-  const relatedProducts = [
-    {
-      id: "mountain-raw",
-      name: "Mountain Raw Honey",
-      price: "549",
-      image: "/images/wild_forest_honey.png",
-    },
-    {
-      id: "acacia-infused",
-      name: "Acacia Infused Honey",
-      price: "699",
-      image: "/images/acacia_infused_honey.png",
-    },
-    {
-      id: "wildflower-nectar",
-      name: "Wildflower Nectar",
-      price: "450",
-      image: "/images/wild_forest_honey.png",
-    },
-  ].filter((p) => p.id !== product.id).slice(0, 3);
+  const relatedProducts = allProducts.filter((p) => p.id !== product?.id).slice(0, 3);
+
+  if (loading) {
+    return (
+      <div className="pt-32 min-h-screen pb-24 max-w-6xl mx-auto px-4 md:px-6 flex flex-col md:flex-row gap-8">
+         <div className="w-full md:w-1/2 aspect-square bg-black/5 dark:bg-white/5 animate-pulse rounded-3xl"></div>
+         <div className="w-full md:w-1/2 flex flex-col gap-4">
+           <div className="h-10 bg-black/5 dark:bg-white/5 animate-pulse rounded-md w-3/4"></div>
+           <div className="h-6 bg-black/5 dark:bg-white/5 animate-pulse rounded-md w-full"></div>
+           <div className="h-6 bg-black/5 dark:bg-white/5 animate-pulse rounded-md w-5/6"></div>
+           <div className="h-8 bg-black/5 dark:bg-white/5 animate-pulse rounded-md w-1/4 mt-4"></div>
+         </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="pt-32 min-h-screen pb-24 flex items-center justify-center px-4">
+        <div className="text-center p-8 liquid-glass rounded-3xl max-w-md w-full">
+          <h2 className="text-2xl font-heading text-red-500 mb-4">Product Not Found</h2>
+          <p className="font-body text-muted-foreground mb-6">{error || "The product you're looking for doesn't exist."}</p>
+          <Link to="/shop" className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-full text-sm font-body font-semibold hover:scale-105 transition-transform">
+            Back to Shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -99,7 +117,7 @@ export default function ProductDetail() {
                 {product.name}
               </h1>
               <p className="font-body text-lg md:text-xl text-muted-foreground font-light mb-4 md:mb-6">
-                {product.tagline}
+                {product.tagline || product.description || "100% natural and pure honey."}
               </p>
               
               <div className="flex items-center gap-4 mb-4">
@@ -109,7 +127,7 @@ export default function ProductDetail() {
                 <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
                   <Star className="w-4 h-4 text-primary fill-primary" />
                   <span className="text-sm font-body font-medium text-primary">
-                    {product.rating}
+                    {product.rating || "4.8"}
                   </span>
                 </div>
               </div>
@@ -125,11 +143,11 @@ export default function ProductDetail() {
             <div className="hidden md:block space-y-2 mb-8 text-sm font-body text-muted-foreground/80">
               <p className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                {product.status}
+                {product.status || (product.stock > 0 ? "In Stock" : "Limited Stock")}
               </p>
               <p className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-border"></span>
-                {product.delivery}
+                {product.delivery || "Ships in 24 hours"}
               </p>
             </div>
 
@@ -159,8 +177,11 @@ export default function ProductDetail() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 liquid-glass-strong px-8 py-4 rounded-full flex items-center justify-center gap-2 text-sm font-body font-semibold text-foreground hover:scale-[1.02] transition-transform">
-                  <ShoppingBag className="w-4 h-4" /> Add to Cart
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 liquid-glass-strong px-8 py-4 rounded-full flex items-center justify-center gap-2 text-sm font-body font-semibold text-foreground hover:scale-[1.02] transition-transform"
+                >
+                  <ShoppingBag className="w-4 h-4" /> {addedFeedback ? "Added to Cart!" : "Add to Cart"}
                 </button>
                 <button className="flex-1 bg-white text-[hsl(28,30%,10%)] px-8 py-4 rounded-full flex items-center justify-center gap-2 text-sm font-body font-semibold hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all">
                   Buy Now
@@ -321,8 +342,11 @@ export default function ProductDetail() {
               <Plus className="w-4 h-4" />
             </button>
           </div>
-          <button className="flex-1 bg-primary text-primary-foreground py-3.5 px-6 rounded-full text-sm font-body font-bold flex justify-center items-center gap-2 active:scale-95 transition-transform">
-            Add • ₹{product.price * quantity}
+          <button 
+            onClick={handleAddToCart}
+            className="flex-1 bg-primary text-primary-foreground py-3.5 px-6 rounded-full text-sm font-body font-bold flex justify-center items-center gap-2 active:scale-95 transition-transform"
+          >
+            {addedFeedback ? "Added!" : `Add • ₹${product.price * quantity}`}
           </button>
         </div>
       )}
