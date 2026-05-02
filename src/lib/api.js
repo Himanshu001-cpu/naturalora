@@ -1,17 +1,13 @@
-export const API_BASE = "https://api.example.com"; // placeholder
+import { products } from "../data/products";
 
 export const fetchProducts = async () => {
-  const res = await fetch(`${API_BASE}/products`);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
+  return products;
 };
 
 export const fetchProductById = async (id) => {
-  const res = await fetch(`${API_BASE}/products/${id}`);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
+  const product = products.find((p) => p.id === id);
+  if (!product) {
+    throw new Error("Product not found");
   }
-  return res.json();
+  return product;
 };

@@ -123,8 +123,8 @@ export default function Shop() {
         {loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="liquid-glass rounded-2xl md:rounded-3xl p-3 md:p-6 relative flex flex-col h-full min-h-[250px] md:min-h-[350px] animate-pulse">
-                <div className="relative aspect-square mb-3 md:mb-6 rounded-xl md:rounded-2xl bg-black/10 dark:bg-white/10" />
+              <div key={n} className="liquid-glass [border-radius:16px] p-3 md:p-6 relative flex flex-col h-full min-h-[250px] md:min-h-[350px] animate-pulse">
+                <div className="relative aspect-square mb-3 md:mb-6 [border-radius:10px] bg-black/10 dark:bg-white/10" />
                 <div className="h-6 bg-black/10 dark:bg-white/10 rounded-md w-3/4 mb-2" />
                 <div className="hidden md:block h-4 bg-black/10 dark:bg-white/10 rounded-md w-full mb-4" />
                 <div className="h-6 bg-black/10 dark:bg-white/10 rounded-md w-1/4 mt-auto" />
@@ -160,9 +160,9 @@ export default function Shop() {
                   scale: 1.02,
                   boxShadow: "0 10px 40px rgba(250,204,21,0.15)",
                 }}
-                className="liquid-glass rounded-2xl md:rounded-3xl p-3 md:p-6 relative flex flex-col h-full transition-all duration-300"
+                className="liquid-glass [border-radius:16px] p-3 md:p-6 relative flex flex-col h-full min-h-[200px] md:min-h-[340px] transition-all duration-300"
               >
-                <div className="relative aspect-square mb-3 md:mb-6 overflow-hidden rounded-xl md:rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="relative aspect-square mb-3 md:mb-6 overflow-hidden [border-radius:10px] bg-black/20 flex items-center justify-center">
                   <motion.img
                     src={product.image}
                     alt={product.name}
@@ -182,7 +182,7 @@ export default function Shop() {
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                  <h3 className="font-heading italic text-lg md:text-2xl text-foreground mb-1 md:mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                  <h3 className="font-heading italic text-lg md:text-2xl text-foreground mb-1 md:mb-2 group-hover:text-primary transition-colors line-clamp-2 min-w-0">
                     {product.name}
                   </h3>
                   <p className="hidden md:block font-body text-sm text-muted-foreground font-light mb-4 flex-1">
@@ -195,7 +195,7 @@ export default function Shop() {
                   {isMobile && (
                     <button 
                       onClick={(e) => handleQuickAdd(e, product)}
-                      className="mt-3 w-full rounded-full liquid-glass-strong py-2 text-xs font-body font-semibold flex items-center justify-center gap-1 active:scale-95 transition-transform"
+                      className="mt-3 w-full [border-radius:10px] liquid-glass-strong py-2 text-xs font-body font-semibold flex items-center justify-center gap-1 active:scale-95 transition-transform"
                     >
                       {addedItems[product.id] ? "Added!" : <><Plus className="w-3 h-3" /> Add</>}
                     </button>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Hexagon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CartList from '../components/cart/CartList';
 import { useCartStore } from '../store/cart';
 
 export default function Cart() {
+  const navigate = useNavigate();
   const [promo, setPromo] = useState("");
   const items = useCartStore((state) => state.items);
   const subtotal = useCartStore((state) => state.getSubtotal());
@@ -78,7 +79,7 @@ export default function Cart() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="liquid-glass backdrop-blur-sm rounded-xl p-5 space-y-4 sticky top-28 max-w-md mx-auto"
+            className="liquid-glass backdrop-blur-sm [border-radius:16px] p-5 space-y-4 sticky top-28 max-w-md mx-auto"
           >
             <h2 className="font-heading text-lg italic">Order Summary</h2>
             
@@ -89,11 +90,11 @@ export default function Cart() {
                 placeholder="Promo code" 
                 value={promo}
                 onChange={(e) => setPromo(e.target.value)}
-                className="flex-1 bg-transparent border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 text-foreground"
+                className="flex-1 bg-transparent border border-white/10 [border-radius:8px] px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 text-foreground"
               />
               <motion.button 
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 rounded-lg liquid-glass-strong text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="px-4 py-2 [border-radius:8px] liquid-glass-strong text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
                 Apply
               </motion.button>
@@ -119,8 +120,9 @@ export default function Cart() {
             </div>
 
             <motion.button 
+              onClick={() => navigate('/checkout')}
               whileTap={{ scale: 0.98 }}
-              className="hidden lg:flex w-full rounded-xl liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all items-center justify-center gap-2 group"
+              className="hidden lg:flex w-full [border-radius:10px] liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all items-center justify-center gap-2 group"
             >
               Proceed to Checkout 
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -140,8 +142,9 @@ export default function Cart() {
           <span className="text-2xl font-bold text-primary text-shimmer">₹{total}</span>
         </div>
         <motion.button 
+          onClick={() => navigate('/checkout')}
           whileTap={{ scale: 0.98 }}
-          className="w-full rounded-xl liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center gap-2"
+          className="w-full [border-radius:10px] liquid-glass-strong py-3 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center gap-2"
         >
           Proceed to Checkout
         </motion.button>

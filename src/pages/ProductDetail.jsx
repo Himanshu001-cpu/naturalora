@@ -157,10 +157,10 @@ export default function ProductDetail() {
                 <span className="font-body text-sm text-foreground uppercase tracking-widest">
                   Quantity
                 </span>
-                <div className="liquid-glass rounded-full flex items-center p-1">
+                <div className="liquid-glass [border-radius:12px] flex items-center gap-1 p-1">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-foreground"
+                    className="w-9 h-9 flex items-center justify-center [border-radius:6px] hover:bg-white/10 transition-colors text-foreground"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -169,7 +169,7 @@ export default function ProductDetail() {
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-foreground"
+                    className="w-9 h-9 flex items-center justify-center [border-radius:6px] hover:bg-white/10 transition-colors text-foreground"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -296,17 +296,17 @@ export default function ProductDetail() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ ...honeyTransition, delay: isMobile ? 0 : i * 0.1 }}
-                className="liquid-glass rounded-2xl p-3 md:p-4 flex gap-4 items-center hover:bg-white/10 transition-colors"
+                className="liquid-glass [border-radius:16px] p-3 md:p-4 flex gap-4 items-center hover:bg-white/10 transition-colors"
               >
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-black/20 shrink-0">
+                <div className="w-16 h-16 md:w-20 md:h-20 [border-radius:10px] overflow-hidden bg-black/20 shrink-0">
                   <img
                     src={p.image}
                     alt={p.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <div>
-                  <h4 className="font-heading italic text-base md:text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-heading italic text-base md:text-lg text-foreground mb-1 group-hover:text-primary transition-colors truncate">
                     {p.name}
                   </h4>
                   <p className="font-body text-sm text-foreground">₹{p.price}</p>
@@ -325,10 +325,10 @@ export default function ProductDetail() {
       {/* Sticky Buy Bar (Mobile Only) */}
       {isMobile && (
         <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/85 backdrop-blur-xl border-t border-border/30 flex items-center justify-between gap-4">
-          <div className="flex items-center bg-white/10 rounded-full p-1 border border-white/5">
+          <div className="flex items-center bg-white/10 [border-radius:12px] p-1 border border-white/5 gap-1">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-8 h-8 flex items-center justify-center rounded-full active:bg-white/10 transition-colors text-foreground"
+              className="w-8 h-8 flex items-center justify-center [border-radius:6px] active:bg-white/10 transition-colors text-foreground"
             >
               <Minus className="w-4 h-4" />
             </button>
@@ -337,7 +337,7 @@ export default function ProductDetail() {
             </span>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full active:bg-white/10 transition-colors text-foreground"
+              className="w-8 h-8 flex items-center justify-center [border-radius:6px] active:bg-white/10 transition-colors text-foreground"
             >
               <Plus className="w-4 h-4" />
             </button>
