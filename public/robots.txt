@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+Disallow: /checkout
+Disallow: /account
+Disallow: /orders
+
+Sitemap: https://naturalora.com/sitemap.xml

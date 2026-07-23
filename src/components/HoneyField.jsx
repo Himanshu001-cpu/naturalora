@@ -1,6 +1,15 @@
 import Antigravity from "./Antigravity";
+import useReducedMotion from "../hooks/useReducedMotion";
+import useDeviceCapability from "../hooks/useDeviceCapability";
 
 export default function HoneyField() {
+  const prefersReducedMotion = useReducedMotion();
+  const { isLowEnd } = useDeviceCapability();
+
+  if (prefersReducedMotion || isLowEnd) {
+    return <div className="honey-field" />;
+  }
+
   return (
     <div className="honey-field">
       <Antigravity
@@ -20,3 +29,4 @@ export default function HoneyField() {
     </div>
   );
 }
+

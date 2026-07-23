@@ -1,8 +1,10 @@
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useState } from "react";
 import bee from "../assets/bee.svg";
+import useReducedMotion from "../hooks/useReducedMotion";
 
 export default function BeeFollower() {
+  const prefersReducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
@@ -22,7 +24,7 @@ export default function BeeFollower() {
   }, []);
 
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || prefersReducedMotion) return;
 
     const move = (e) => {
       // Offset by 40px to follow like it's chasing
@@ -32,9 +34,9 @@ export default function BeeFollower() {
 
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
-  }, [mouseX, mouseY, isMobile]);
+  }, [mouseX, mouseY, isMobile, prefersReducedMotion]);
 
-  if (isMobile) {
+  if (isMobile || prefersReducedMotion) {
     return null;
   }
 
@@ -67,3 +69,4 @@ export default function BeeFollower() {
     </motion.div>
   );
 }
+

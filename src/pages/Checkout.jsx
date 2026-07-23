@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle2, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { useCartStore } from '../store/cart';
-import { createOrder } from '../lib/orderService';
+import { createOrder, markOrderPaid, markOrderFailed } from '../lib/orderService';
 import { initiatePayment } from '../lib/paymentService';
+import { useAuth } from '../context/AuthContext';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, getSubtotal, clearCart } = useCartStore();
+  const { user, userProfile } = useAuth();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -22,10 +24,22 @@ export default function Checkout() {
   
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStage, setPaymentStage] = useState(''); // 'creating' | 'paying' | ''
   
   const subtotal = getSubtotal();
   const delivery = subtotal > 0 ? 0 : 0;
   const total = subtotal + delivery;
+
+  // Pre-fill user profile details if available
+  useEffect(() => {
+    if (userProfile || user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || userProfile?.name || user?.displayName || '',
+        phone: prev.phone || userProfile?.phone || '',
+      }));
+    }
+  }, [userProfile, user]);
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -79,34 +93,88 @@ export default function Checkout() {
     setIsProcessing(true);
     setErrors({});
     
+    let order = null;
+    
     try {
+      // ── Step 1: Create a "pending" order in Firestore ───────────────
+      setPaymentStage('creating');
+
       const cartObj = {
         items,
         getSubtotal: () => subtotal
       };
       
       const combinedAddress = `${formData.house}, ${formData.street}, ${formData.city}, ${formData.state}`;
-      const submitData = { ...formData, address: combinedAddress };
+      const submitData = { ...formData, address: combinedAddress, email: user?.email || "" };
+      const userInfo = {
+        userId: user?.uid || null,
+        customerName: formData.name,
+        customerEmail: user?.email || "",
+      };
+
+      order = await createOrder(cartObj, submitData, userInfo);
       
-      const order = await createOrder(cartObj, submitData);
-      const paymentResult = await initiatePayment(order);
+      // ── Step 2: Open Razorpay checkout ──────────────────────────────
+      setPaymentStage('paying');
+
+      const paymentResult = await initiatePayment({
+        amount: total,
+        customer: {
+          name: formData.name,
+          phone: formData.phone,
+          email: user?.email || "",
+        },
+        description: `Order #${order.id}`,
+      });
       
+      // ── Step 3: Update Firestore order with payment data ────────────
+      await markOrderPaid(order.id, paymentResult);
+      
+      // ── Step 4: Clear cart & navigate to success ────────────────────
       clearCart();
-      navigate('/order-success', { state: { order, paymentResult } });
+      navigate('/order-success', {
+        state: {
+          order,
+          paymentResult: {
+            paymentId: paymentResult.razorpay_payment_id,
+            orderId: paymentResult.razorpay_order_id,
+            status: 'success',
+          },
+        },
+      });
       
     } catch (err) {
-      if (err.message === "Payment failed") {
-        setErrors({ general: 'Payment failed. Try again.' });
+      console.error("Checkout error:", err);
+
+      // If order was created but payment failed — mark it in Firestore
+      if (order?.id && paymentStage === 'paying') {
+        markOrderFailed(order.id, err.message);
+      }
+
+      if (err.message === "Payment cancelled by user") {
+        setErrors({ general: 'Payment was cancelled. You can try again.' });
+      } else if (err.message.includes("verification failed")) {
+        setErrors({ general: 'Payment could not be verified. Contact support if money was deducted.' });
+      } else if (err.message.includes("SDK failed")) {
+        setErrors({ general: 'Could not load the payment gateway. Please check your internet and try again.' });
       } else {
-        setErrors({ general: 'Order creation failed. Please try again.' });
+        setErrors({ general: err.message || 'Something went wrong. Please try again.' });
       }
       setIsProcessing(false);
+      setPaymentStage('');
     }
   };
 
   if (items.length === 0 && !isProcessing) {
     return null; // Will redirect
   }
+
+  const getButtonLabel = () => {
+    if (!isProcessing) return 'Pay & Place Order';
+    if (paymentStage === 'creating') return 'Creating Order...';
+    if (paymentStage === 'paying') return 'Complete Payment...';
+    return 'Processing...';
+  };
 
   return (
     <div className="min-h-screen pt-28 pb-40 lg:pb-24 px-4 lg:px-16 max-w-5xl mx-auto">
@@ -139,8 +207,9 @@ export default function Checkout() {
             <h2 className="text-xl font-heading mb-6 italic text-primary">Shipping Details</h2>
             
             {errors.general && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 [border-radius:10px] mb-6 text-sm">
-                {errors.general}
+              <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 [border-radius:10px] mb-6 text-sm flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" />
+                <span>{errors.general}</span>
               </div>
             )}
 
@@ -236,6 +305,7 @@ export default function Checkout() {
                 </div>
               </div>
               
+              {/* Mobile CTA */}
               <div className="pt-4 lg:hidden">
                 <motion.button 
                   whileTap={{ scale: isProcessing ? 1 : 0.98 }}
@@ -246,11 +316,11 @@ export default function Checkout() {
                   {isProcessing ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Processing Payment...
+                      {getButtonLabel()}
                     </>
                   ) : (
                     <>
-                      Place Order <CheckCircle2 className="w-4 h-4" />
+                      <ShieldCheck className="w-4 h-4" /> {getButtonLabel()}
                     </>
                   )}
                 </motion.button>
@@ -303,6 +373,13 @@ export default function Checkout() {
               </div>
             </div>
 
+            {/* Secure payment badge */}
+            <div className="flex items-center gap-2 text-xs text-white/40 pt-1">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Secured by Razorpay • 256-bit encryption</span>
+            </div>
+
+            {/* Desktop CTA */}
             <motion.button 
               whileTap={{ scale: isProcessing ? 1 : 0.98 }}
               disabled={isProcessing}
@@ -312,11 +389,11 @@ export default function Checkout() {
               {isProcessing ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Processing Payment...
+                  {getButtonLabel()}
                 </>
               ) : (
                 <>
-                  Place Order <CheckCircle2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" /> {getButtonLabel()}
                 </>
               )}
             </motion.button>

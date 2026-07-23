@@ -3,12 +3,17 @@
   "default_agent": "openwork",
   "mcp": {
     "chrome-devtools": {
+      "type": "local",
+      "enabled": true,
       "command": [
         "npx",
         "-y",
-        "chrome-devtools-mcp@latest"
+        "chrome-devtools-mcp@latest",
+        "--autoConnect"
       ],
-      "type": "local"
+      "environment": {
+        "HOME": "/home/himanshu"
+      }
     }
   }
 }

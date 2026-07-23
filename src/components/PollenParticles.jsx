@@ -1,6 +1,13 @@
 import { motion } from "motion/react";
+import useReducedMotion from "../hooks/useReducedMotion";
 
 export default function PollenParticles() {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return null;
+  }
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
       {[...Array(20)].map((_, i) => (
@@ -25,3 +32,4 @@ export default function PollenParticles() {
     </div>
   );
 }
+
